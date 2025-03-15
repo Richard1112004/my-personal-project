@@ -10,7 +10,7 @@
 //   const [totalPrice, setTotalPrice] = useState(0);
 //   const [cartImage, setCartImage] =useState([])
 //   const [showModal, setShowModal] = useState(false);
-  
+
 //   // useEffect(() => {
 //   //   const fetchImagesAndUpdateCart = async () => {
 //   //     console.log("Cart", cart);
@@ -19,7 +19,7 @@
 //   //         console.log("ITEM",item)
 //   //         try {
 //   //           const response = await axios.get(
-//   //             `http://localhost:8080/api/product/${item.id}/image`,
+//   //             `/api/product/${item.id}/image`,
 //   //             { responseType: "blob" }
 //   //           );
 //             // const imageFile = await converUrlToFile(response.data,response.data.imageName)
@@ -34,7 +34,7 @@
 //   //     );
 //   //     const filteredCartItems = updatedCartItems.filter((item) => item.available);
 //   //     setCartItems(updatedCartItems);
-     
+
 //   //   };
 
 //   //   if (cart.length) {
@@ -45,8 +45,8 @@
 //   useEffect(() => {
 //     const fetchImagesAndUpdateCart = async () => {
 //       try {
-    
-//         const response = await axios.get("http://localhost:8080/api/products");
+
+//         const response = await axios.get("/api/products");
 //         const backendProductIds = response.data.map((product) => product.id);
 
 //         const updatedCartItems = cart.filter((item) => backendProductIds.includes(item.id));
@@ -54,7 +54,7 @@
 //           updatedCartItems.map(async (item) => {
 //             try {
 //               const response = await axios.get(
-//                 `http://localhost:8080/api/product/${item.id}/image`,
+//                 `/api/product/${item.id}/image`,
 //                 { responseType: "blob" }
 //               );
 //               const imageFile = await converUrlToFile(response.data, response.data.imageName);
@@ -71,7 +71,7 @@
 //         setCartItems(cartItemsWithImages);
 //       } catch (error) {
 //         console.error("Error fetching product data:", error);
-    
+
 //       }
 //     };
 
@@ -79,8 +79,6 @@
 //       fetchImagesAndUpdateCart();
 //     }
 //   }, [cart]);
-  
-
 
 //   useEffect(() => {
 //     console.log("CartItems", cartItems);
@@ -97,7 +95,6 @@
 //     setTotalPrice(total);
 //   }, [cartItems]);
 
- 
 //   const handleIncreaseQuantity = (itemId) => {
 //     const newCartItems = cartItems.map((item) =>
 //       item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
@@ -124,26 +121,26 @@
 //       for (const item of cartItems) {
 //         const { imageUrl, imageName, imageData, imageType, quantity, ...rest } = item;
 //         const updatedStockQuantity = item.stockQuantity - item.quantity;
-  
+
 //         const updatedProductData = { ...rest, stockQuantity: updatedStockQuantity };
 //         console.log("updated product data", updatedProductData)
-  
+
 //         const cartProduct = new FormData();
 //         cartProduct.append("imageFile", cartImage);
 //         cartProduct.append(
 //           "product",
 //           new Blob([JSON.stringify(updatedProductData)], { type: "application/json" })
 //         );
-  
+
 //         await axios
-//           .put(`http://localhost:8080/api/product/${item.id}`, cartProduct, {
+//           .put(`/api/product/${item.id}`, cartProduct, {
 //             headers: {
 //               "Content-Type": "multipart/form-data",
 //             },
 //           })
 //           .then((response) => {
 //             console.log("Product updated successfully:", (cartProduct));
-            
+
 //           })
 //           .catch((error) => {
 //             console.error("Error updating product:", error);
@@ -155,7 +152,7 @@
 //       console.log("error during checkout", error);
 //     }
 //   };
-  
+
 //   return (
 //     <div className="cart-container">
 //       <div className="shopping-cart">
@@ -254,18 +251,14 @@
 
 // export default Cart;
 
-
-
-
-
 import React, { useContext, useState, useEffect } from "react";
 import AppContext from "../Context/Context";
 import axios from "axios";
 import CheckoutPopup from "./CheckoutPopup";
-import { Button } from 'react-bootstrap';
+import { Button } from "react-bootstrap";
 
 const Cart = () => {
-  const { cart, removeFromCart , clearCart } = useContext(AppContext);
+  const { cart, removeFromCart, clearCart } = useContext(AppContext);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartImage, setCartImage] = useState([]);
@@ -275,19 +268,24 @@ const Cart = () => {
     const fetchImagesAndUpdateCart = async () => {
       console.log("Cart", cart);
       try {
-        const response = await axios.get("http://localhost:8080/api/products");
+        const response = await axios.get("/api/products");
         const backendProductIds = response.data.map((product) => product.id);
 
-        const updatedCartItems = cart.filter((item) => backendProductIds.includes(item.id));
+        const updatedCartItems = cart.filter((item) =>
+          backendProductIds.includes(item.id)
+        );
         const cartItemsWithImages = await Promise.all(
           updatedCartItems.map(async (item) => {
             try {
               const response = await axios.get(
-                `http://localhost:8080/api/product/${item.id}/image`,
+                `/api/product/${item.id}/image`,
                 { responseType: "blob" }
               );
-              const imageFile = await converUrlToFile(response.data, response.data.imageName);
-              setCartImage(imageFile)
+              const imageFile = await converUrlToFile(
+                response.data,
+                response.data.imageName
+              );
+              setCartImage(imageFile);
               const imageUrl = URL.createObjectURL(response.data);
               return { ...item, imageUrl };
             } catch (error) {
@@ -296,7 +294,7 @@ const Cart = () => {
             }
           })
         );
-        console.log("cart",cart)
+        console.log("cart", cart);
         setCartItems(cartItemsWithImages);
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -319,7 +317,7 @@ const Cart = () => {
   const converUrlToFile = async (blobData, fileName) => {
     const file = new File([blobData], fileName, { type: blobData.type });
     return file;
-  }
+  };
 
   const handleIncreaseQuantity = (itemId) => {
     const newCartItems = cartItems.map((item) => {
@@ -334,7 +332,6 @@ const Cart = () => {
     });
     setCartItems(newCartItems);
   };
-  
 
   const handleDecreaseQuantity = (itemId) => {
     const newCartItems = cartItems.map((item) =>
@@ -354,27 +351,33 @@ const Cart = () => {
   const handleCheckout = async () => {
     try {
       for (const item of cartItems) {
-        const { imageUrl, imageName, imageData, imageType, quantity, ...rest } = item;
+        const { imageUrl, imageName, imageData, imageType, quantity, ...rest } =
+          item;
         const updatedStockQuantity = item.stockQuantity - item.quantity;
-  
-        const updatedProductData = { ...rest, stockQuantity: updatedStockQuantity };
-        console.log("updated product data", updatedProductData)
-  
+
+        const updatedProductData = {
+          ...rest,
+          stockQuantity: updatedStockQuantity,
+        };
+        console.log("updated product data", updatedProductData);
+
         const cartProduct = new FormData();
         cartProduct.append("imageFile", cartImage);
         cartProduct.append(
           "product",
-          new Blob([JSON.stringify(updatedProductData)], { type: "application/json" })
+          new Blob([JSON.stringify(updatedProductData)], {
+            type: "application/json",
+          })
         );
-  
+
         await axios
-          .put(`http://localhost:8080/api/product/${item.id}`, cartProduct, {
+          .put(`/api/product/${item.id}`, cartProduct, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           })
           .then((response) => {
-            console.log("Product updated successfully:", (cartProduct));
+            console.log("Product updated successfully:", cartProduct);
           })
           .catch((error) => {
             console.error("Error updating product:", error);
@@ -405,7 +408,6 @@ const Cart = () => {
                   style={{ display: "flex", alignContent: "center" }}
                   key={item.id}
                 >
-                 
                   <div>
                     <img
                       src={item.imageUrl}
@@ -474,7 +476,6 @@ const Cart = () => {
         handleCheckout={handleCheckout}
       />
     </div>
-
   );
 };
 
