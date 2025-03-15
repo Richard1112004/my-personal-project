@@ -21,11 +21,11 @@ const UpdateProduct = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`localhost:8080/api/product/${id}`);
+        const response = await axios.get(`/api/product/${id}`);
 
         setProduct(response.data);
 
-        const responseImage = await axios.get(`localhost:8080/api/product/${id}/image`, {
+        const responseImage = await axios.get(`/api/product/${id}/image`, {
           responseType: "blob",
         });
         const imageFile = await converUrlToFile(
@@ -64,7 +64,7 @@ const UpdateProduct = () => {
 
     console.log("formData : ", updatedProduct);
     axios
-      .put(`localhost:8080/api/product/${id}`, updatedProduct, {
+      .put(`/api/product/${id}`, updatedProduct, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
