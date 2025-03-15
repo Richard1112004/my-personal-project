@@ -1,9 +1,14 @@
 {
-    "rewrites": [
-      {
-        "source": "/api/(.*)",
-        "destination": "http://ec2-18-118-113-81.us-east-2.compute.amazonaws.com:8080/api/$1"
-      }
-    ]
-  }
-  
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "http://your-backend-server.com/api/$1"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/[^.]+",
+      "dest": "/"
+    }
+  ]
+}
